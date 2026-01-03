@@ -33,6 +33,7 @@ private:
     XMFLOAT3 m_position;
     XMFLOAT3 m_velocity;
     XMFLOAT3 m_size;
+    XMFLOAT4 m_color;
 
     float m_moveSpeed;
     float m_jumpForce;

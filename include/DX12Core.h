@@ -2,7 +2,7 @@
 
 #include <d3d12.h>
 #include <dxgi1_6.h>
-#include <D3Dcompiler.h>
+#include <d3dcompiler.h>
 #include <DirectXMath.h>
 #include <wrl/client.h>
 #include <vector>
@@ -26,6 +26,8 @@ struct ConstantBuffer
 class DX12Core
 {
 public:
+    static const UINT FrameCount = 2;
+
     DX12Core();
     ~DX12Core();
 
@@ -43,60 +45,60 @@ public:
     void WaitForGPU();
 
 private:
-    static const UINT FrameCount = 2;
-
     bool CreateDevice();
     bool CreateCommandQueue();
     bool CreateSwapChain(HWND hwnd, int width, int height);
     bool CreateDescriptorHeaps();
-    bool CreateRenderTargetViews();
-    bool CreateDepthStencilBuffer(int width, int height);
+    bool CreateRenderTargets();
+    bool CreateDepthStencil(int width, int height);
+    bool CreateRootSignature();
+    bool CreatePipelineState();
     bool CreateCommandAllocators();
     bool CreateCommandList();
     bool CreateFence();
-    bool CreateRootSignature();
-    bool CreatePipelineState();
     bool CreateVertexBuffer();
     bool CreateIndexBuffer();
     bool CreateConstantBuffer();
 
     void PopulateCommandList();
-
-    ComPtr<ID3D12Device> m_device;
-    ComPtr<ID3D12CommandQueue> m_commandQueue;
-    ComPtr<IDXGISwapChain3> m_swapChain;
-    ComPtr<ID3D12DescriptorHeap> m_rtvHeap;
-    ComPtr<ID3D12DescriptorHeap> m_dsvHeap;
-    ComPtr<ID3D12DescriptorHeap> m_cbvHeap;
-    ComPtr<ID3D12Resource> m_renderTargets[FrameCount];
-    ComPtr<ID3D12Resource> m_depthStencil;
-    ComPtr<ID3D12CommandAllocator> m_commandAllocators[FrameCount];
-    ComPtr<ID3D12GraphicsCommandList> m_commandList;
-    ComPtr<ID3D12RootSignature> m_rootSignature;
-    ComPtr<ID3D12PipelineState> m_pipelineState;
-
-    ComPtr<ID3D12Resource> m_vertexBuffer;
-    D3D12_VERTEX_BUFFER_VIEW m_vertexBufferView;
-
-    ComPtr<ID3D12Resource> m_indexBuffer;
-    D3D12_INDEX_BUFFER_VIEW m_indexBufferView;
-
-    ComPtr<ID3D12Resource> m_constantBuffer;
-    UINT8* m_constantBufferDataBegin;
-
-    ComPtr<ID3D12Fence> m_fence;
-    UINT64 m_fenceValues[FrameCount];
-    HANDLE m_fenceEvent;
-
-    UINT m_rtvDescriptorSize;
-    UINT m_frameIndex;
-
-    D3D12_VIEWPORT m_viewport;
-    D3D12_RECT m_scissorRect;
-
-    XMMATRIX m_viewMatrix;
-    XMMATRIX m_projectionMatrix;
+    void MoveToNextFrame();
 
     int m_width;
     int m_height;
+
+    // Pipeline objects
+    D3D12_VIEWPORT m_viewport;
+    D3D12_RECT m_scissorRect;
+    ComPtr<IDXGISwapChain3> m_swapChain;
+    ComPtr<ID3D12Device> m_device;
+    ComPtr<ID3D12Resource> m_renderTargets[FrameCount];
+    ComPtr<ID3D12CommandAllocator> m_commandAllocators[FrameCount];
+    ComPtr<ID3D12CommandQueue> m_commandQueue;
+    ComPtr<ID3D12RootSignature> m_rootSignature;
+    ComPtr<ID3D12DescriptorHeap> m_rtvHeap;
+    ComPtr<ID3D12DescriptorHeap> m_dsvHeap;
+    ComPtr<ID3D12DescriptorHeap> m_cbvHeap;
+    ComPtr<ID3D12PipelineState> m_pipelineState;
+    ComPtr<ID3D12GraphicsCommandList> m_commandList;
+    UINT m_rtvDescriptorSize;
+
+    // App resources
+    ComPtr<ID3D12Resource> m_vertexBuffer;
+    ComPtr<ID3D12Resource> m_indexBuffer;
+    ComPtr<ID3D12Resource> m_constantBuffer;
+    ComPtr<ID3D12Resource> m_depthStencil;
+    D3D12_VERTEX_BUFFER_VIEW m_vertexBufferView;
+    D3D12_INDEX_BUFFER_VIEW m_indexBufferView;
+    UINT8* m_cbvDataBegin;
+
+    // Synchronization objects
+    UINT m_frameIndex;
+    HANDLE m_fenceEvent;
+    ComPtr<ID3D12Fence> m_fence;
+    UINT64 m_fenceValues[FrameCount];
+
+    // Matrices
+    XMMATRIX m_viewMatrix;
+    XMMATRIX m_projectionMatrix;
+    XMMATRIX m_currentWorldMatrix;
 };

@@ -175,7 +175,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     HWND hwnd = CreateWindowEx(
         0,
         L"DirectX12_3DPlatformer",
-        L"DirectX 12 - 3D Platformer",
+        L"DirectX 12 3D Platformer",
         WS_OVERLAPPEDWINDOW,
         CW_USEDEFAULT, CW_USEDEFAULT,
         rect.right - rect.left,
@@ -195,7 +195,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     g_dx12Core = new DX12Core();
     if (!g_dx12Core->Initialize(hwnd, WINDOW_WIDTH, WINDOW_HEIGHT))
     {
-        MessageBox(NULL, L"Failed to initialize DirectX 12", L"Error", MB_OK);
         delete g_dx12Core;
         return 1;
     }

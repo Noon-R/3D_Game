@@ -38,22 +38,23 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 void ProcessInput(float deltaTime)
 {
-    if (g_keys['A'])
+    // GetAsyncKeyState()を使用してより確実なキー入力処理
+    if (GetAsyncKeyState('A') & 0x8000)
         g_player->MoveLeft(deltaTime);
 
-    if (g_keys['D'])
+    if (GetAsyncKeyState('D') & 0x8000)
         g_player->MoveRight(deltaTime);
 
-    if (g_keys['W'])
+    if (GetAsyncKeyState('W') & 0x8000)
         g_player->MoveForward(deltaTime);
 
-    if (g_keys['S'])
+    if (GetAsyncKeyState('S') & 0x8000)
         g_player->MoveBackward(deltaTime);
 
-    if (g_keys[VK_SPACE])
+    if (GetAsyncKeyState(VK_SPACE) & 0x8000)
         g_player->Jump();
 
-    if (g_keys[VK_ESCAPE])
+    if (GetAsyncKeyState(VK_ESCAPE) & 0x8000)
         PostQuitMessage(0);
 }
 
@@ -191,6 +192,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
     ShowWindow(hwnd, nCmdShow);
     UpdateWindow(hwnd);
+    SetFocus(hwnd);  // ウィンドウにフォーカスを設定
 
     g_dx12Core = new DX12Core();
     if (!g_dx12Core->Initialize(hwnd, WINDOW_WIDTH, WINDOW_HEIGHT))
